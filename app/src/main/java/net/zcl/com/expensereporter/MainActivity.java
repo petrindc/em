@@ -3,6 +3,7 @@ package net.zcl.com.expensereporter;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -13,6 +14,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import net.zcl.com.er.exception.BusinessException;
+import net.zcl.com.er.pojo.BankMessage;
+import net.zcl.com.er.service.BTMessageReader;
+import net.zcl.com.er.service.MessageReader;
+
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -20,6 +28,16 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        final int REQUEST_CODE_ASK_PERMISSIONS = 123;
+        ActivityCompat.requestPermissions(this, new String[]{"android.permission.READ_SMS"}, REQUEST_CODE_ASK_PERMISSIONS);
+        MessageReader reader = new BTMessageReader();
+        try {
+            List<BankMessage> messages = reader.readMessages(this, null, null);
+        } catch (BusinessException e) {
+            e.printStackTrace();
+        }
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
